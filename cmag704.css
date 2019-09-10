@@ -186,6 +186,13 @@ div#login-register-inner button {
     width: 100%;
 }
 
+div#logout {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    text-align: center;
+    background-color: aliceblue;
+}
+
 iframe {
     width: 100%;
     border: none;

@@ -8,6 +8,8 @@ const MESSAGE_TYPE = {
   INFO: { text: '', className: 'message-info' }
 }
 
+let credentials; //🙃
+
 function refreshIfVisible() {
   // If any of the sections are visible, refresh using the relevant function
   const functionList = {
@@ -16,6 +18,7 @@ function refreshIfVisible() {
     'news': getNews,
     'shop': getShop,
     'guestbook': getComments,
+    'login-register': updateLoggedElements
   };
   const observer = new IntersectionObserver((sections) => {
     sections.forEach((section) => {
@@ -184,30 +187,61 @@ function createMessage(container, description, type) {
   container.innerHTML = ""
   container.append(message);
 }
+
+function updateLoggedElements() {
+  //Updates the page if the user is logged in or logged out
+  const logout = document.querySelector("div#logout");
+  const loginRegister = document.querySelector("div#login-register-inner");
+  const headerLink = document.querySelector("a[href='#login-register']");
+  const logoutText = document.querySelector("span#template-user")
+
+  if (credentials) {
+    logout.style.display = 'block';
+    loginRegister.style.display = 'none';
+    headerLink.textContent = `🔒 ${credentials.username}`
+    logoutText.textContent = credentials.username
   }
   else {
-    container.append(message);
+    logout.style.display = 'none';
+    loginRegister.style.display = 'flex';
+    headerLink.textContent = '🔒 Login/Register'
+    logoutText.textContent = ''
   }
 }
 
-async function login(e, username, password) {
+function secureRequest(endpoint, onload) {
+  if (credentials === undefined) {
+    window.location.hash = 'login-register';
+    return
+  }
+  let xhr = new XMLHttpRequest();
+  xhr.open("GET", `${BASE_URL_SECURE}/${endpoint}`, true, credentials.username, credentials.password);
+  xhr.withCredentials = true
+  xhr.onload = onload
+  xhr.send()
+}
+
+function login(e, username, password) {
   //Prevents the page refreshing on form submit
   e.preventDefault();
 
-  const messages = 'form#login div.messages';
-  //const headers = new Headers({ Authorization: `Digest ${btoa(`${username}:${password}`)}` });
+  credentials = { username: username, password: password }
 
-  let xhr = new XMLHttpRequest();
-  xhr.open("HEAD", `${BASE_URL_SECURE}/id`, true, username, password);
-  xhr.withCredentials = true;
-  await xhr.send();
-
-  console.log(xhr.status)
-  console.log(xhr.getAllResponseHeaders())
-  return;
+  secureRequest('id', (event) => {
+    const xhr = event.target
+    const messages = 'form#login div.messages';
+    if (xhr.status == 401) {
+      createMessage(messages, 'Incorrect username or password', MESSAGE_TYPE.ERROR)
+      credentials = undefined;
+    } else if (xhr.status == 200) {
+      credentials = { username: username, password: password }
+      updateLoggedElements()
+    } else {
+      console.log(xhr)
+      createMessage(messages, "something unknown went really, really wrong", MESSAGE_TYPE.ERROR)
+    }
+  })
 }
-
-
 
 async function register(e) {
   //Prevents the page refreshing on form submit
@@ -293,13 +327,21 @@ function registerEventHandlers() {
   //login user
   document.querySelector('form#login').addEventListener('submit', (e) => {
     //Passing here simplifies logging in for first time after registration
+    const pass = document.querySelector('form#login input[name="password"]')
     login(e,
-      document.querySelector('form#login input[name="username"]'),
-      document.querySelector('form#login input[name="password"]')
+      document.querySelector('form#login input[name="username"]').value,
+      pass.value
     )
+    pass.value = ""
   });
   //Register user
   document.querySelector('form#register').addEventListener('submit', register);
+
+  //logout user
+  document.querySelector('#logout>button').addEventListener('click', () => {
+    credentials = undefined
+    updateLoggedElements()
+  })
 }
 
 window.onload = () => {
