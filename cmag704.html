@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="shortcut icon" href="http://redsox.uoa.auckland.ac.nz/ms/logo-192x192.png" type="image/svg+xml">
+    <link rel="stylesheet" href="cmag704.css">
+    <script src="cmag704.js" defer></script>
+    <title>The Bob Doran Museum of Computing</title>
+</head>
+
+<body>
+
+    <header>
+        <a id="logo-link" href="#default">
+            <svg></svg>
+            <h1>The Bob Doran Museum of Computing</h1>
+        </a>
+
+        <nav>
+            <a href="#news">📰 News</a>
+            <a href="#displays">💻 Displays</a>
+            <a href="#guestbook">📖 Guest Book</a>
+        </nav>
+
+    </header>
+
+    <main>
+        <section id="default">
+            <h2>Welcome to The Bob Doran Museum of Computing</h2>
+            You can learn more about the displays here. If you are intrigued by what you find here and live close to
+            Auckland, or are visiting the city, please feel free to
+            drop in to the school and see the displays for yourself. We are located at the University on Princes Street
+            and are always open during normal office hours and also in the evenings and on the weekends when classes are
+            in session
+        </section>
+
+        <section id="news">
+            <h2>News</h2>
+            <div id="news-items"></div>
+        </section>
+
+        <section id="displays">
+            <h2>Displays</h2>
+            <input type="text" id="search-box" placeholder="search">
+            <div id="items">
+            </div>
+        </section>
+
+        <section id="guestbook">
+            <h2>Guestbook</h2>
+            <form>
+                <textarea id="comment" placeholder="Enter your comment"></textarea>
+                <input type="text" id="name" placeholder="Enter your name">
+                <input type="submit" value="Post Comment">
+            </form>
+            <iframe src="http://redsox.uoa.auckland.ac.nz/ms/MuseumService.svc/htmlcomments">
+        </section>
+
+    </main>
+
+</body>
+
+</html>

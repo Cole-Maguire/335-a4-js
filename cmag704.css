@@ -1,0 +1,164 @@
+html {
+    /* Would like to just stuff this into the body section, 
+    but doesn't work on chrome */
+    scroll-behavior: smooth
+}
+
+body {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    width: 50%;
+    margin: auto;
+    background-color: rgb(240, 240, 240);
+}
+
+body>header {
+    text-align: center;
+    background-color: white;
+}
+
+img {
+    height: 100px;
+    width: 100px;
+}
+
+body>header>a {
+    text-decoration: none;
+    margin: 0;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+h1,
+h2,
+h3,
+nav>a {
+    color: rgb(0, 70, 127);
+}
+
+a *:hover,
+a:hover {
+    fill: rgb(0, 140, 255);
+    color: rgb(0, 140, 255);
+}
+
+nav {
+    display: flex;
+    justify-content: space-around;
+}
+
+nav>a {
+    margin: 10px;
+}
+
+svg {
+    height: 100px;
+    width: 100px;
+    fill: rgb(0, 70, 127);
+}
+
+
+/*Navigation using hash*/
+main>section#default {
+    display: block;
+}
+
+main>section#default:not(:target) {
+    display: none;
+}
+
+main>section {
+    display: none;
+}
+
+main>section:target {
+    display: block;
+}
+
+main {
+    background-color: white;
+    margin-top: 10px;
+    padding: 15px;
+}
+
+h2 {
+    margin-top: 0;
+}
+
+article {
+    background-color: aliceblue;
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+.article-content {
+    display: flex;
+    padding: 5px;
+}
+
+article>header h3 {
+    margin: 5px;
+}
+
+.date {
+    margin: 5px;
+    color: grey;
+    font-style: italic;
+}
+
+.article-content img {
+    padding: 10px;
+    flex-shrink: 0;
+}
+
+form {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    grid-template-rows: 3fr 1fr;
+    grid-template-areas: "textarea textarea""name submit";
+}
+
+form>* {
+    padding: 2px;
+    margin: 3px;
+}
+
+textarea {
+    grid-area: textarea;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#search-box {
+    padding: 5px;
+    width: calc(100% - 10px);
+    margin-bottom: 10px;
+}
+
+iframe {
+    width: 100%;
+    border: none;
+    /*because of the magic of cross origin policy (wow!) 
+    we can't even get the actual height of the iframe, so this
+    is a completely arbitrary height :) */
+    height: 250px;
+}
+
+@media only screen and (max-width:600px) {
+    body {
+        width: 95%;
+    }
+
+    .article-content {
+        flex-direction: column;
+    }
+
+    .article-content img {
+        padding: 0px;
+        margin: 0px;
+        width: 100%;
+        height: auto;
+    }
+}
