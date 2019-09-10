@@ -171,14 +171,19 @@ async function getNews() {
   });
 }
 function createMessage(container, description, type) {
+  if (typeof container === "string") {
+    //accept string or element itself
+    container = document.querySelector(container)
+  }
+
   let message = document.createElement('div');
   message.classList.add('message');
   message.classList.add(type.className);
   message.textContent = `${type.text}${description}`;
 
-  if (typeof container === "string") {
-    //accept string or element itself
-    document.querySelector(container).append(message);
+  container.innerHTML = ""
+  container.append(message);
+}
   }
   else {
     container.append(message);
