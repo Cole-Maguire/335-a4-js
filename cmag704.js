@@ -75,7 +75,7 @@ async function postComment(name, content) {
           'Content-Type': 'application/json; charset=utf-8',
         },
         method: 'POST',
-        body: `"${content.replace('\n', '')}"`,
+    body: JSON.stringify(comment.value)
       // Newlines break the server. Probably other stuff as well.
       });
 
