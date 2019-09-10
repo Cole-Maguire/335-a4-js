@@ -73,8 +73,10 @@ function buyShopItem(event) {
     //exit if we didn't click on a buy me button
     return;
   }
-  const itemID = event.target.dataset.id;
-  window.open(`http://localhost:8189/Service.svc/buy?id=${itemID}`);
+  secureRequest(`buy?id=${event.target.dataset.id}`, (e) => {
+    const xhr = e.target;
+    alert(JSON.parse(xhr.response))
+  })
 }
 
 function createShopItem({ Description, ItemId, Title }) {
