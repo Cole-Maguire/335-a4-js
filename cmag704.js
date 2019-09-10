@@ -235,6 +235,8 @@ function login(e, username, password) {
       credentials = undefined;
     } else if (xhr.status == 200) {
       credentials = { username: username, password: password }
+      // Obviously this looks weird here, but the user will only see it if they log out again
+      createMessage(messages, 'Successfully logged out', MESSAGE_TYPE.INFO)
       updateLoggedElements()
     } else {
       console.log(xhr)
