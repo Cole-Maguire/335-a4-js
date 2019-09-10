@@ -218,6 +218,7 @@ function secureRequest(endpoint, onload) {
   }
   let xhr = new XMLHttpRequest();
   xhr.open("GET", `${BASE_URL_SECURE}/${endpoint}`, true, credentials.username, credentials.password);
+  xhr.setRequestHeader('Accept', 'application/json')
   xhr.withCredentials = true
   xhr.onload = onload
   xhr.send()
