@@ -1,6 +1,7 @@
 -- NETWORK USER --
 
 N01: 
+    http://localhost:8188/MuseumService.svc/search?term=a%27;%20drop%20table%20Credentials;%20--
 
 N02: 
     POST http://localhost:8188/MuseumService.svc/comment?name=HTML%20Injection HTTP/1.1
