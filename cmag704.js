@@ -283,6 +283,7 @@ async function register(e) {
 
   if (response.status === 200) {
     createMessage(messages, "Successfully registered", MESSAGE_TYPE.INFO);
+    alert(`Hi, ${name.value}\nYour registration was succesful - thanks for choosing the Bob Doran Museum of Computing!`)
     login(e, name.value, password.value);
   }
   else {
