@@ -1,6 +1,12 @@
 /* eslint-disable require-jsdoc */
-const BASEURL = 'http://redsox.uoa.auckland.ac.nz/ms/MuseumService.svc';
+const BASE_URL = 'http://localhost:8188/MuseumService.svc';
+const BASE_URL_SECURE = 'http://localhost:8189/Service.svc';
 
+const MESSAGE_TYPE = {
+  ERROR: { text: 'Error: ', className: 'message-error' },
+  WARNING: { text: 'Warning: ', className: 'message-warning' },
+  INFO: { text: '', className: 'message-info' }
+}
 
 function refreshIfVisible() {
   // If any of the sections are visible, refresh using the relevant function
@@ -8,6 +14,7 @@ function refreshIfVisible() {
     'default': undefined,
     'displays': getItems,
     'news': getNews,
+    'shop': getShop,
     'guestbook': getComments,
   };
   const observer = new IntersectionObserver((sections) => {
@@ -25,13 +32,13 @@ function refreshIfVisible() {
   }
 }
 
-function createItemArticle({Description, ItemId, Title}) {
+function createItemArticle({ Description, ItemId, Title }) {
   const article = document.createElement('article');
 
   article.innerHTML = `<header><h3>${Title}</h3></header>
     <div class="article-content">
-    <a href="${BASEURL}/itemimg?id=${ItemId}">
-      <img src="${BASEURL}/itemimg?id=${ItemId}">
+    <a href="${BASE_URL}/itemimg?id=${ItemId}">
+      <img src="${BASE_URL}/itemimg?id=${ItemId}">
     </a>
     ${Description}
     </div>`;
@@ -43,18 +50,62 @@ async function getItems(searchTerm) {
   // Search if we're passed a search term, else fetch all items
   const url = searchTerm === undefined ? `items` : `search?term=${searchTerm}`;
 
-  const response = await fetch(`${BASEURL}/${url}`,
-      {
-        headers: {
-          'Accept': 'application/json',
-        },
-      });
+  const response = await fetch(`${BASE_URL}/${url}`,
+    {
+      headers: {
+        'Accept': 'application/json',
+      },
+    });
   const items = await response.json();
 
-  const baseDiv = document.querySelector('div#items');
+  const baseDiv = document.querySelector('div#display-items');
   baseDiv.innerHTML = ''; // Clear any existing items, if existing
   items.forEach((i) => {
     baseDiv.append(createItemArticle(i));
+  });
+}
+
+function buyShopItem(event) {
+  if (!event.target.classList.contains('buy')) {
+    //exit if we didn't click on a buy me button
+    return;
+  }
+  const itemID = event.target.dataset.id;
+  window.open(`http://localhost:8189/Service.svc/buy?id=${itemID}`);
+}
+
+function createShopItem({ Description, ItemId, Title }) {
+  const article = document.createElement('article');
+
+  article.innerHTML = `<header><h3>${Title}</h3></header>
+    <div class="article-content">
+    <a href="${BASE_URL}/shopimg?id=${ItemId}">
+      <img src="${BASE_URL}/shopimg?id=${ItemId}">
+    </a>
+    <div class="shop-inner">
+      ${Description}
+      <button type="button" class="buy" data-id=${ItemId}>🛒 Buy me!</button>
+    </div
+    </div>`;
+
+  return article;
+}
+
+async function getShop(searchTerm) {
+  // Search if we're passed a search term, else fetch all items;
+
+  const response = await fetch(`${BASE_URL}/shop?term=${searchTerm ? searchTerm : ""}`,
+    {
+      headers: {
+        'Accept': 'application/json',
+      },
+    });
+  const items = await response.json();
+
+  const baseDiv = document.querySelector('div#shop-items');
+  baseDiv.innerHTML = ''; // Clear any existing items, if existing
+  items.forEach((i) => {
+    baseDiv.append(createShopItem(i));
   });
 }
 
@@ -67,19 +118,24 @@ function getComments() {
   iframe.src = iframe.src;
 }
 
-async function postComment(name, content) {
-  const response = await fetch(`${BASEURL}/comment?name=${name}`,
-      {
-        headers: {
-        // Seems to complain if we don't send charset as well
-          'Content-Type': 'application/json; charset=utf-8',
-        },
-        method: 'POST',
+async function postComment() {
+  const name = document.querySelector('input#name');
+  const comment = document.querySelector('textarea#comment');
+
+  const response = await fetch(`${BASE_URL}/comment?name=${name.value}`, {
+    headers: {
+      // Seems to complain if we don't send charset as well
+      'Content-Type': 'application/json; charset=utf-8',
+    },
+    method: 'POST',
     body: JSON.stringify(comment.value)
-      // Newlines break the server. Probably other stuff as well.
-      });
+    // Newlines break the server. Probably other stuff as well.
+  });
 
   if (response.status === 200) {
+    name.value = '';
+    comment.value = '';
+    getComments();
     return true;
   } else {
     alert(`Could not send comment: ${response.status} - ${response.statusText}`);
@@ -87,7 +143,7 @@ async function postComment(name, content) {
   }
 }
 
-function createNewsArticle({descriptionField, enclosureField, linkField, pubDateField, titleField}) {
+function createNewsArticle({ descriptionField, enclosureField, linkField, pubDateField, titleField }) {
   const article = document.createElement('article');
   article.innerHTML = `<header>
     <a href="${linkField}"><h3>${titleField}</h3></a>
@@ -104,8 +160,8 @@ function createNewsArticle({descriptionField, enclosureField, linkField, pubDate
 }
 
 async function getNews() {
-  const response = await fetch(`${BASEURL}/news`,
-      {headers: {'Accept': 'application/json'}});
+  const response = await fetch(`${BASE_URL}/news`,
+    { headers: { 'Accept': 'application/json' } });
   const news = await response.json();
 
   const baseDiv = document.querySelector('div#news-items');
@@ -114,18 +170,94 @@ async function getNews() {
     baseDiv.append(createNewsArticle(n));
   });
 }
+function createMessage(container, description, type) {
+  let message = document.createElement('div');
+  message.classList.add('message');
+  message.classList.add(type.className);
+  message.textContent = `${type.text}${description}`;
 
-async function checkAPIVersion() {
-  const EXPECTED = '1.0.1';
+  if (typeof container === "string") {
+    //accept string or element itself
+    document.querySelector(container).append(message);
+  }
+  else {
+    container.append(message);
+  }
+}
+
+async function login(e, username, password) {
+  //Prevents the page refreshing on form submit
+  e.preventDefault();
+
+  const messages = 'form#login div.messages';
+  //const headers = new Headers({ Authorization: `Digest ${btoa(`${username}:${password}`)}` });
+
+  let xhr = new XMLHttpRequest();
+  xhr.open("HEAD", `${BASE_URL_SECURE}/id`, true, username, password);
+  xhr.withCredentials = true;
+  await xhr.send();
+
+  console.log(xhr.status)
+  console.log(xhr.getAllResponseHeaders())
+  return;
+}
 
 
-  const response = await fetch(`${BASEURL}/version`,
-      {headers: {'Accept': 'application/json'}});
+
+async function register(e) {
+  //Prevents the page refreshing on form submit
+  e.preventDefault();
+
+  //I kinda wanna do this more elegantly, but whatever
+  const name = document.querySelector('form#register input[name="username"]');
+  const password = document.querySelector('form#register input[name="password"]');
+  const confirm = document.querySelector('form#register input[name="confirm-password"]');
+  const address = document.querySelector('form#register textarea[name="address"]');
+  const messages = document.querySelector('form#register div.messages');
+
+  messages.textContent = '';
+
+  if (password.value !== confirm.value) {
+    createMessage(messages, 'Passwords do not match', MESSAGE_TYPE.ERROR);
+    return;
+  }
+  //Mainly just because it's fun to say
+  const responseStringifiable = JSON.stringify({
+    Address: address.textContent,
+    Name: name.value,
+    Password: password.value
+  });
+
+  const response = await fetch(`${BASE_URL}/register`, {
+    headers: {
+      // Seems to complain if we don't send charset as well
+      'Content-Type': 'application/json; charset=utf-8',
+    },
+    method: 'POST',
+    body: responseStringifiable
+  });
+
+  if (response.status === 200) {
+    createMessage(messages, "Successfully registered", MESSAGE_TYPE.INFO);
+    login(e, name.value, password.value);
+  }
+  else {
+    console.log(response)
+    createMessage(messages, await response.statusText, MESSAGE_TYPE.ERROR);
+  }
+
+}
+
+async function checkAPIVersion(api) {
+
+  const response = await fetch(`${api.url}/version`,
+    { headers: { 'Accept': 'application/json' } });
   const actual = await response.json();
 
-  if (EXPECTED !== actual) {
-    console.error(`Expected API version ${EXPECTED}; but got version ${actual} instead`);
+  if (api.expected !== actual) {
+    console.error(`For ${api.name} API, expected version ${api.expected}; but got version ${actual} instead`);
   }
+
 }
 
 async function setLogo() {
@@ -134,9 +266,45 @@ async function setLogo() {
   document.querySelector('#logo-link>svg').outerHTML = svg;
 }
 
+function registerEventHandlers() {
+  //All the onclicks and input changes and stuff. Yucky and boilerplatey, but whatever
+
+  //Add the event listener to the parent to take advantage of bubbling,
+  // prevent preformance issues with potentially dozens of click listeners on each buy me button
+  document.querySelector('#shop-items').addEventListener('click', buyShopItem)
+
+  // Add an event listener to search as the user types in the searchbox
+  const searchDisplays = document.querySelector('#search-displays');
+  searchDisplays.addEventListener('input', () => {
+    getItems(searchDisplays.value);
+  });
+  const searchShop = document.querySelector('#search-shop');
+  searchShop.addEventListener('input', () => {
+    getShop(searchShop.value);
+  });
+
+  //Post comment
+  document.querySelector('form#comment-form').addEventListener('submit', postComment);
+  //login user
+  document.querySelector('form#login').addEventListener('submit', (e) => {
+    //Passing here simplifies logging in for first time after registration
+    login(e,
+      document.querySelector('form#login input[name="username"]'),
+      document.querySelector('form#login input[name="password"]')
+    )
+  });
+  //Register user
+  document.querySelector('form#register').addEventListener('submit', register);
+}
+
 window.onload = () => {
+
   // Log an error if the API is not the expected version
-  checkAPIVersion();
+  const toCheck = [
+    { expected: '1.1.0', url: BASE_URL, name: 'General/Insecure' },
+    //{ expected: '1.0.0', url: BASE_URL_SECURE, name: 'Shop/Secure' }
+  ]
+  toCheck.forEach(api => checkAPIVersion(api))
 
   // Inline the SVG logo (so we can colour it)
   setLogo();
@@ -145,26 +313,6 @@ window.onload = () => {
   if (!window.location.hash) {
     window.location.hash = 'default';
   }
-
-  // Add an event listener to search as the user types in the searchbox
-  const searchBox = document.querySelector('#search-box');
-  searchBox.addEventListener('input', () => {
-    getItems(searchBox.value);
-  });
-
-  document.querySelector('section>form')
-      .addEventListener('submit', async () => {
-        const name = document.querySelector('input#name');
-        const comment = document.querySelector('textarea#comment');
-        const resp = await postComment(name.value, comment.value);
-        /* firefox doesn't like if we just inline the await postCommment(...)
-into the if statement, because reasons?(?)*/
-        if (resp) {
-          name.value = '';
-          comment.value = '';
-          getComments();
-        }
-      });
-
+  registerEventHandlers();
   refreshIfVisible();
 };

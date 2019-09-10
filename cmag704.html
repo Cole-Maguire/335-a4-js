@@ -16,15 +16,17 @@
             <svg></svg>
             <h1>The Bob Doran Museum of Computing</h1>
         </a>
-
         <nav>
             <a href="#news">📰 News</a>
             <a href="#displays">💻 Displays</a>
+            <a href="#shop">💲 Shop</a>
             <a href="#guestbook">📖 Guest Book</a>
+            <a href="#login-register">🔒 Login/Register</a>
+
         </nav>
 
     </header>
-
+    <noscript>JS is required in order for literally anything to work here :)</noscript>
     <main>
         <section id="default">
             <h2>Welcome to The Bob Doran Museum of Computing</h2>
@@ -42,19 +44,63 @@
 
         <section id="displays">
             <h2>Displays</h2>
-            <input type="text" id="search-box" placeholder="search">
-            <div id="items">
+            <input type="text" id="search-displays" class="search" placeholder="search">
+            <div id="display-items">
+            </div>
+        </section>
+
+        <section id="shop">
+            <h2>Shop</h2>
+            <input type="text" id="search-shop" class="search" placeholder="search">
+            <div id="shop-items">
+            </div>
+        </section>
+
+        <section id="login-register">
+            <h2>Login/Register</h2>
+            <div id="login-register-inner">
+                <form id="login">
+                    <h3>Login</h3>
+                    <div class="form-inner">
+                        <label for="username">Username</label>
+                        <input type="text" name="username" placeholder="Enter username">
+
+                        <label for="password">Password</label>
+                        <input type="password" name="password" placeholder="Enter password">
+                    </div>
+                    <div class="messages"></div>
+                    <button type="submit" id="button-login">Login</button>
+                </form>
+                <form id="register">
+                    <h3>Register</h3>
+                    <div class="form-inner">
+                        <label for="username">Username</label>
+                        <input type="text" name="username" placeholder="Enter username">
+
+                        <label for="password">Password</label>
+                        <input type="password" name="password" placeholder="Enter password">
+
+                        <label for="confirm-password">Confirm Password</label>
+                        <input type="password" name="confirm-password" placeholder="Confirm password">
+
+                        <label for="address">Address</label>
+                        <!--We fit this using css grid, breaks in firefox if the number is too high (such as the default of 20)-->
+                        <textarea cols="1" name="address" placeholder="Enter Address for Delivery"></textarea>
+                    </div>
+                    <div class="messages"></div>
+                    <button type="submit" id="button-register">Register</button>
+                </form>
             </div>
         </section>
 
         <section id="guestbook">
             <h2>Guestbook</h2>
-            <form>
+            <form id="comment-form">
                 <textarea id="comment" placeholder="Enter your comment"></textarea>
                 <input type="text" id="name" placeholder="Enter your name">
                 <input type="submit" value="Post Comment">
             </form>
-            <iframe src="http://redsox.uoa.auckland.ac.nz/ms/MuseumService.svc/htmlcomments">
+            <iframe src="http://localhost:8188/MuseumService.svc/htmlcomments"></iframe>
         </section>
 
     </main>

