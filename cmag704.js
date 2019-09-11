@@ -136,7 +136,8 @@ function getComments() {
   iframe.src = iframe.src;
 }
 
-async function postComment() {
+async function postComment(e) {
+  e.preventDefault();
   const name = document.querySelector('input#name');
   const comment = document.querySelector('textarea#comment');
 
