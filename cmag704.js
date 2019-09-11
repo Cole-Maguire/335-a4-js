@@ -25,6 +25,28 @@ function secureRequest(endpoint, onload) {
   xhr.send();
 }
 
+async function checkAPIVersion(secure) {
+  // The duplication here is ugly as sin, but what are ya gonna do?
+  const api = secure ? { expected: '1.0.0', url: BASE_URL_SECURE, name: 'Shop/Secure' } : { expected: '1.1.0', url: BASE_URL, name: 'General/Insecure' };
+  const message = (actual) => {
+    if (api.expected !== actual) {
+      console.error(`For ${api.name} API, expected version ${api.expected}; but got version ${actual} instead`);
+    }
+  };
+
+  if (secure) {
+    secureRequest('version', (event) => {
+      const xhr = event.target;
+      message(JSON.parse(xhr.response));
+    });
+  } else {
+    const response = await fetch(`${api.url}/version`,
+      { headers: { Accept: 'application/json' } });
+    const actual = await response.json();
+    message(actual);
+  }
+}
+
 function createItemArticle({ Description, ItemId, Title }) {
   const article = document.createElement('article');
 
@@ -216,6 +238,7 @@ function login(e, username, password) {
       // Obviously this looks weird here, but the user will only see it if they log out again
       createMessage(messages, 'Successfully logged out', MESSAGE_TYPE.INFO);
       updateLoggedElements();
+      checkAPIVersion(true);
     } else {
       console.error(xhr);
       createMessage(messages, 'something unknown went really, really wrong', MESSAGE_TYPE.ERROR);
@@ -261,16 +284,6 @@ async function register(e) {
   } else {
     console.error(response);
     createMessage(messages, await response.statusText, MESSAGE_TYPE.ERROR);
-  }
-}
-
-async function checkAPIVersion(api) {
-  const response = await fetch(`${api.url}/version`,
-    { headers: { Accept: 'application/json' } });
-  const actual = await response.json();
-
-  if (api.expected !== actual) {
-    console.error(`For ${api.name} API, expected version ${api.expected}; but got version ${actual} instead`);
   }
 }
 
@@ -343,11 +356,7 @@ function registerEventHandlers() {
 
 window.onload = () => {
   // Log an error if the API is not the expected version
-  const toCheck = [
-    { expected: '1.1.0', url: BASE_URL, name: 'General/Insecure' },
-    // { expected: '1.0.0', url: BASE_URL_SECURE, name: 'Shop/Secure' }
-  ];
-  toCheck.forEach((api) => checkAPIVersion(api));
+  checkAPIVersion(false);
 
   // Inline the SVG logo (so we can colour it)
   setLogo();
