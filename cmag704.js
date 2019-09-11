@@ -276,14 +276,18 @@ async function register(e) {
     method: 'POST',
     body: responseStringifiable,
   });
+  const respPayload = await response.json();
 
-  if (response.status === 200) {
+  if (response.status === 200 && respPayload === `User ${name.value} registered`) {
+    // We check the response as well as if, for example, we attempt to register the same name twice
+    // instead of sending a 409 or some other error code, the server returns a 200 OK
+    // (and no indications of an error other than an arbitrary string 🙃)
     createMessage(messages, 'Successfully registered', MESSAGE_TYPE.INFO);
     alert(`Hi, ${name.value}\nYour registration was succesful - thanks for choosing the Bob Doran Museum of Computing!`);
     login(e, name.value, password.value);
   } else {
     console.error(response);
-    createMessage(messages, await response.statusText, MESSAGE_TYPE.ERROR);
+    createMessage(messages, respPayload, MESSAGE_TYPE.ERROR);
   }
 }
 
