@@ -168,6 +168,8 @@ div#login-register-inner form {
     background-color: aliceblue;
     padding: 10px;
     margin-bottom: 20px;
+    margin-left: 5px;
+    margin-right: 5px;
     display: flex;
     flex-flow: column wrap;
     flex-grow: 1;
@@ -176,7 +178,8 @@ div#login-register-inner form {
 
 div#login-register-inner form>div.form-inner {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: auto 1fr;
+    grid-column-gap: 5%;
 }
 
 div#login-register-inner form>div>* {
