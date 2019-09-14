@@ -191,6 +191,7 @@ div#login-register-inner button {
 }
 
 div#logout {
+    display: none;
     padding-top: 20px;
     padding-bottom: 20px;
     text-align: center;
