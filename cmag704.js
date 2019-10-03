@@ -1,8 +1,8 @@
 /* eslint-disable no-alert */
 /* eslint-disable no-console */
 
-const BASE_URL = 'http://localhost:8188/MuseumService.svc';
-const BASE_URL_SECURE = 'http://localhost:8189/Service.svc';
+const BASE_URL = 'http://redsox.uoa.auckland.ac.nz/ms/MuseumService.svc/';
+const BASE_URL_SECURE = 'http://redsox.uoa.auckland.ac.nz/mss/Service.svc/';
 
 const MESSAGE_TYPE = {
   ERROR: { text: 'Error: ', className: 'message-error' },
